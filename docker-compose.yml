@@ -1,0 +1,20 @@
+web:
+    build: ./dashproject
+    command: python app4-1.py
+    ports:
+     - "8800:80"
+    links:
+     - db
+
+app:
+    build: ./DBStore
+    command: sh cron1.sh
+    volumes:
+     - .:/data
+    links:
+     - db
+
+db:
+    image: mongo:latest
+
+    

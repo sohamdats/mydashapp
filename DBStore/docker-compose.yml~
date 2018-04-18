@@ -1,0 +1,9 @@
+app:
+    build: .
+    command: cron
+    volumes:
+     - .:/test
+    links:
+     - db
+db:
+    image: mongo:3.0.2

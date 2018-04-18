@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Testing...</title>
+  </head>
+  <body>
+    <h3>Full List...</h3>
+    {% for time in data %}
+    <h3>Time:{{time.time}}</h3>
+    {% for stat in time.stats %}
+    {% if name == stat.name and usage == None%}
+    <ul>
+      <li>Name:{{stat.name}}</li>
+      <li>CPU Usage:{{stat.cpu_usage}}</li>
+      <li>Memory Usage:{{stat.memory_usage}}</li>
+    </ul>
+    {% elif name == stat.name and usage == 'cpu_usage' %}
+    <ul>
+      <li>Name:{{stat.name}}</li>
+      <li>{{usage}}: {{stat.cpu_usage}}</li>
+    </ul>
+    {% elif name == stat.name and usage == 'memory_usage' %}
+    <ul>
+      <li>Name:{{stat.name}}</li>
+      <li>{{usage}}: {{stat.memory_usage}}</li>
+    </ul>
+    
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+  </body>
+</html>

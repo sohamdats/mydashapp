@@ -1,0 +1,147 @@
+import dash
+from dash.dependencies import Output,Input,Event,State
+import dash_core_components as dcc
+import dash_html_components as html
+import plotly
+from dockerGuest import dockerGuest
+import random
+docker=dockerGuest()
+app = dash.Dash(__name__)
+
+image_list = docker.image_list()
+
+countries = ['America','India','New Zealand'] 
+app.layout = html.Div([
+      
+    html.Div([
+        html.Div([
+            dcc.Dropdown(id='country-list',options=[{'label':c,'value':c} for c in countries],value=countries[0]),
+            html.Button(id='submit',children='Click Here',n_clicks=0,className='btn btn-primary'),
+            ],className='col-md-2',style={'paddingTop':'50px'}),
+        html.Div([
+            html.Div(id='result',style={'textAlign':'center'}),
+            ],className='col-md-10'),
+    ],className='row')
+    ],className='container')
+
+
+@app.callback(dash.dependencies.Output('result','children'),
+              [dash.dependencies.Input('submit','n_clicks')],
+              [State('country-list','value')],)
+def update(n_clicks,country):
+    if n_clicks > 0:
+        return html.H1('{} was clicked'.format(country))
+
+              
+'''
+#----------------APP LAYOUT------------------#
+
+app.layout = html.Div(children=[
+     html.Div(children = [
+         html.H3("List of containers currenty running in the machine"),
+         dcc.Dropdown(id='container-image-list',options=[{'label':i,'option':i} for i in image_list],value=image_list[0]),
+         html.Button(id='generate-graph',children='Generate Graph',className='btn btn-primary'),
+         ],className ='col-md-2'),
+    html.Div(children = [
+
+        html.Div(id='left-side',className='col-md-5'),
+        html.Div(id='right-side',className='col-md-5'),
+        
+        ],className='col-md-10'),
+    ],className='container')
+
+#---------------------------------------------#
+
+@app.callback(Output('left-side','children'),
+              [Input('generate-graph','n_clicks')],
+        [State('container-image-list','value')])
+def update_graph(n_clicks,value):
+    if n_clicks > 0:
+        return '{} was clicked'.format(value)
+
+
+
+
+#---------APP Layout-----------#
+
+app.layout = html.Div(children = [
+    html.Div(children=[
+        html.H3("Containers",style={'color':'#111111','textAlign':'left'}),
+        html.Button(id='show-containers',n_clicks=0,children='Show containers',className='btn btn-primary',style={'textAlign':'center'}),
+
+        html.Div(children = [
+             dcc.Dropdown(id='container-image-list',options=[{'label':i,'option':i} for i in image_list],value='List'),
+            
+           ],
+          id='image-list',style={'paddingTop':'50px'})
+    ],
+             className='col-md-2'),
+    html.Div(id='container-details',children=[
+        html.Div(id='cpu-usage',className='col-md-5'),
+        html.Div(id='memory-usage',className='col-md-5')
+    ],className='col-md-10'),
+],className='container')
+
+#--------------------------------------#
+'''
+
+'''
+#-----------Container List------------------------------------#
+
+def get_button(_id,c,cName):
+
+    data = html.Button(
+        id=_id,
+        n_clicks=0,
+        children=c,
+        className=cName,
+        style={
+            'textAlign':'center',
+            'marginBottom':'20px',
+            }
+        )
+    return data
+
+def get_dropdown(image_list):
+
+    return html.Dropdown(
+        id = 'container_image_list',
+        options = [{'label':i,'value':i} for i in image_list],
+        value = image_list[0]
+        )
+    
+    
+@app.callback(Output('image-list','children'),
+              [Input('show-containers','n_clicks')])
+def update_list(n_clicks):
+    data=''
+    image_list = docker.image_list()
+    if n_clicks > 0:
+        if len(image_list) > 0:
+            #data = html.Div(children=[get_button(name,name,'btn btn-primary') for i, name in enumerate(docker.image_list())])
+            data = html.Div(dcc.Dropdown(id='container-image-list',options=[{'label':i,'option':i} for i in image_list],value=image_list[0]))
+        else:
+            data = html.Div("There are no containers currently running")
+    else:
+        data=''
+        
+    return data
+#----------------------------------------------#
+
+
+'''
+
+
+#---------------Bootstrap CSS-------------------#
+
+my_css_url = 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
+app.css.append_css({
+    "external_url":my_css_url
+    })
+
+#------------------------------------------------#
+
+
+if __name__ == '__main__':
+    app.run_server(debug=True,host='0.0.0.0',port=8080)
+
